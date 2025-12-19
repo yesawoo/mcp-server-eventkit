@@ -1,0 +1,85 @@
+#!/bin/bash
+# MCP EventKit Server - Post Installation Script
+
+set -e
+
+INSTALL_DIR="/usr/local/lib/mcp-eventkit"
+BIN_LINK="/usr/local/bin/mcp-eventkit"
+CLAUDE_CONFIG_DIR="$HOME/Library/Application Support/Claude"
+CLAUDE_CONFIG="$CLAUDE_CONFIG_DIR/claude_desktop_config.json"
+
+echo "Configuring MCP EventKit Server..."
+
+# Create symlink to binary
+if [ -L "$BIN_LINK" ]; then
+    rm "$BIN_LINK"
+fi
+ln -sf "$INSTALL_DIR/mcp-eventkit" "$BIN_LINK"
+
+# Ensure Claude config directory exists
+mkdir -p "$CLAUDE_CONFIG_DIR"
+
+# Configure Claude Desktop
+if [ -f "$CLAUDE_CONFIG" ]; then
+    # Config exists - check if eventkit is already configured
+    if grep -q '"eventkit"' "$CLAUDE_CONFIG" 2>/dev/null; then
+        echo "EventKit already configured in Claude Desktop"
+    else
+        # Add eventkit to existing config using Python (available on all Macs)
+        python3 << 'PYTHON'
+import json
+import os
+
+config_path = os.path.expanduser("~/Library/Application Support/Claude/claude_desktop_config.json")
+
+with open(config_path, 'r') as f:
+    config = json.load(f)
+
+if 'mcpServers' not in config:
+    config['mcpServers'] = {}
+
+config['mcpServers']['eventkit'] = {
+    "command": "/usr/local/bin/mcp-eventkit"
+}
+
+with open(config_path, 'w') as f:
+    json.dump(config, f, indent=2)
+
+print("Added eventkit to Claude Desktop configuration")
+PYTHON
+    fi
+else
+    # Create new config
+    cat > "$CLAUDE_CONFIG" << 'JSON'
+{
+  "mcpServers": {
+    "eventkit": {
+      "command": "/usr/local/bin/mcp-eventkit"
+    }
+  }
+}
+JSON
+    echo "Created Claude Desktop configuration"
+fi
+
+# Set permissions
+chmod 755 "$INSTALL_DIR/mcp-eventkit"
+chmod 755 "$INSTALL_DIR/libEventKitBridge.dylib"
+
+echo ""
+echo "============================================"
+echo "  MCP EventKit Server installed!"
+echo "============================================"
+echo ""
+echo "Next steps:"
+echo "1. Quit and reopen Claude Desktop"
+echo "2. Grant permissions when prompted:"
+echo "   - Reminders access"
+echo "   - Full Disk Access (for tags feature)"
+echo ""
+echo "To grant Full Disk Access:"
+echo "  System Settings > Privacy & Security > Full Disk Access"
+echo "  Add: /usr/local/bin/mcp-eventkit"
+echo ""
+
+exit 0

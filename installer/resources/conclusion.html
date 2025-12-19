@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                padding: 20px;
+                color: #ffffff;
+            }
+            h1 {
+                color: #34c759;
+            }
+            h3 {
+                color: #ffffff;
+                margin-top: 20px;
+            }
+            p {
+                color: #e0e0e0;
+            }
+            .step {
+                margin: 12px 0;
+                padding: 12px 15px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 8px;
+                border-left: 3px solid #34c759;
+            }
+            .step-number {
+                font-weight: bold;
+                color: #34c759;
+                font-size: 16px;
+            }
+            .step-title {
+                color: #ffffff;
+                font-weight: 600;
+            }
+            .step-desc {
+                color: #b0b0b0;
+                margin-top: 4px;
+            }
+            code {
+                background: rgba(255, 255, 255, 0.15);
+                padding: 2px 8px;
+                border-radius: 4px;
+                color: #ffd60a;
+                font-size: 12px;
+            }
+            ul {
+                color: #e0e0e0;
+            }
+            li {
+                margin: 8px 0;
+            }
+            em {
+                color: #0a84ff;
+                font-style: normal;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Instalacion Completada</h1>
+
+        <p>MCP EventKit Server se ha instalado correctamente.</p>
+
+        <h3>Siguientes pasos:</h3>
+
+        <div class="step">
+            <span class="step-number">1.</span>
+            <span class="step-title">Reinicia Claude Desktop</span>
+            <div class="step-desc">
+                Cierra completamente Claude Desktop y vuelve a abrirlo.
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2.</span>
+            <span class="step-title">Otorga permisos</span>
+            <div class="step-desc">
+                Cuando Claude use Reminders por primera vez, acepta el permiso
+                de acceso.
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3.</span>
+            <span class="step-title">Para usar tags (opcional)</span>
+            <div class="step-desc">
+                Ve a
+                <em
+                    >System Settings &gt; Privacy &amp; Security &gt; Full Disk
+                    Access</em
+                ><br />
+                Agrega: <code>/usr/local/bin/mcp-eventkit</code>
+            </div>
+        </div>
+
+        <h3>Uso:</h3>
+        <p>En Claude Desktop, simplemente pide cosas como:</p>
+        <ul>
+            <li>"Muestrame mis recordatorios pendientes"</li>
+            <li>"Crea un recordatorio para llamar al doctor manana"</li>
+            <li>"Marca como completado el recordatorio de compras"</li>
+        </ul>
+    </body>
+</html>

@@ -1,0 +1,42 @@
+#!/bin/bash
+# MCP EventKit Server - Uninstaller App
+
+# Get the directory where this app is located
+APP_DIR="$(dirname "$(dirname "$(dirname "$0")")")"
+
+# Show confirmation dialog
+RESPONSE=$(osascript -e 'display dialog "¿Deseas desinstalar MCP EventKit Server?\n\nEsto eliminará:\n• Los archivos del servidor\n• La configuración de Claude Desktop" buttons {"Cancelar", "Desinstalar"} default button "Cancelar" with icon caution with title "Desinstalar MCP EventKit"')
+
+if [[ "$RESPONSE" != *"Desinstalar"* ]]; then
+    exit 0
+fi
+
+# Request admin privileges and run uninstall
+osascript -e 'do shell script "
+# Remove installed files
+rm -rf /usr/local/lib/mcp-eventkit
+rm -f /usr/local/bin/mcp-eventkit
+" with administrator privileges'
+
+# Remove from Claude Desktop config (doesn't need admin)
+python3 << 'PYTHON'
+import json
+import os
+
+config_path = os.path.expanduser("~/Library/Application Support/Claude/claude_desktop_config.json")
+
+try:
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+
+    if 'mcpServers' in config and 'eventkit' in config['mcpServers']:
+        del config['mcpServers']['eventkit']
+
+        with open(config_path, 'w') as f:
+            json.dump(config, f, indent=2)
+except:
+    pass
+PYTHON
+
+# Show success message
+osascript -e 'display dialog "MCP EventKit Server se ha desinstalado correctamente.\n\nReinicia Claude Desktop para aplicar los cambios." buttons {"OK"} default button "OK" with icon note with title "Desinstalación Completada"'
