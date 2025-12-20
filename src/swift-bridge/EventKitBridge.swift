@@ -1279,3 +1279,48 @@ public func ekb_delete_calendar_event(_ eventIdPtr: UnsafePointer<CChar>?) -> Un
         return errorResponse("Failed to delete event: \(error.localizedDescription)")
     }
 }
+
+// MARK: - Permission Status
+
+private struct PermissionStatus: Codable {
+    let calendars: String
+    let reminders: String
+    let calendarsGranted: Bool
+    let remindersGranted: Bool
+}
+
+/// Check authorization status without requesting
+/// Returns: JSON with permission status for calendars and reminders
+@_cdecl("ekb_check_permissions")
+public func ekb_check_permissions() -> UnsafeMutablePointer<CChar>? {
+    let calendarStatus = EKEventStore.authorizationStatus(for: .event)
+    let reminderStatus = EKEventStore.authorizationStatus(for: .reminder)
+
+    func statusToString(_ status: EKAuthorizationStatus) -> String {
+        switch status {
+        case .notDetermined: return "notDetermined"
+        case .restricted: return "restricted"
+        case .denied: return "denied"
+        case .authorized: return "authorized"
+        case .fullAccess: return "fullAccess"
+        case .writeOnly: return "writeOnly"
+        @unknown default: return "unknown"
+        }
+    }
+
+    func isGranted(_ status: EKAuthorizationStatus) -> Bool {
+        switch status {
+        case .authorized, .fullAccess: return true
+        default: return false
+        }
+    }
+
+    let status = PermissionStatus(
+        calendars: statusToString(calendarStatus),
+        reminders: statusToString(reminderStatus),
+        calendarsGranted: isGranted(calendarStatus),
+        remindersGranted: isGranted(reminderStatus)
+    )
+
+    return successResponse(status)
+}

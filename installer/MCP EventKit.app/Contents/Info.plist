@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>MCP EventKit Server</string>
+	<key>CFBundleExecutable</key>
+	<string>mcp-eventkit</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.mcp.eventkit-server</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>MCP EventKit</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1.2</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSBackgroundOnly</key>
+	<true/>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>MCP EventKit needs full access to your calendars to manage calendar events through Claude or other AI assistants.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>MCP EventKit needs access to your calendars to create, read, update, and delete calendar events on your behalf through Claude or other AI assistants.</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>MCP EventKit needs full access to your reminders to manage tasks through Claude or other AI assistants.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>MCP EventKit needs access to your reminders to create, read, update, and complete tasks on your behalf through Claude or other AI assistants.</string>
+</dict>
+</plist>

@@ -8,6 +8,13 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 VERSION="${1:-1.0.0}"
 IDENTIFIER="com.mcp.eventkit-server"
 PKG_NAME="MCP-EventKit-Server-${VERSION}.pkg"
+APP_NAME="MCP EventKit.app"
+SETUP_APP_NAME="MCP EventKit Setup.app"
+
+# Code signing identities (set these environment variables or modify here)
+APP_SIGN_IDENTITY="${APP_SIGN_IDENTITY:-Developer ID Application: Alejandro Sanchez Rodriguez (8J6557H8MJ)}"
+PKG_SIGN_IDENTITY="${PKG_SIGN_IDENTITY:-Developer ID Installer: Alejandro Sanchez Rodriguez (8J6557H8MJ)}"
+ENTITLEMENTS="$SCRIPT_DIR/entitlements.plist"
 
 echo "Building MCP EventKit Server installer v${VERSION}..."
 
@@ -22,11 +29,68 @@ if [ ! -f "$PROJECT_DIR/build/libEventKitBridge.dylib" ]; then
     exit 1
 fi
 
+# Build Permission Helper app
+echo "Building Permission Helper app..."
+"$SCRIPT_DIR/PermissionHelper/build.sh"
+
+# Build main app bundle
+echo "Building main app bundle..."
+APP_DIR="$SCRIPT_DIR/$APP_NAME"
+rm -rf "$APP_DIR/Contents/MacOS/"*
+rm -rf "$APP_DIR/Contents/Frameworks/"*
+
+# Copy binary and library into app bundle
+cp "$PROJECT_DIR/build/mcp-eventkit" "$APP_DIR/Contents/MacOS/"
+cp "$PROJECT_DIR/build/libEventKitBridge.dylib" "$APP_DIR/Contents/Frameworks/"
+
+# Update version in Info.plist
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$APP_DIR/Contents/Info.plist"
+
+# Sign app bundles
+echo "Signing app bundles..."
+if [ -f "$ENTITLEMENTS" ]; then
+    # Sign main app bundle
+    codesign --force --options runtime --timestamp \
+        --entitlements "$ENTITLEMENTS" \
+        --sign "$APP_SIGN_IDENTITY" \
+        "$APP_DIR/Contents/Frameworks/libEventKitBridge.dylib"
+
+    codesign --force --options runtime --timestamp \
+        --entitlements "$ENTITLEMENTS" \
+        --sign "$APP_SIGN_IDENTITY" \
+        "$APP_DIR/Contents/MacOS/mcp-eventkit"
+
+    codesign --force --options runtime --timestamp \
+        --entitlements "$ENTITLEMENTS" \
+        --sign "$APP_SIGN_IDENTITY" \
+        "$APP_DIR"
+
+    codesign --verify --deep --strict "$APP_DIR"
+    echo "✅ Main app bundle signed"
+
+    # Sign Setup app with entitlements
+    SETUP_APP="$SCRIPT_DIR/PermissionHelper/$SETUP_APP_NAME"
+    codesign --force --options runtime --timestamp \
+        --entitlements "$ENTITLEMENTS" \
+        --sign "$APP_SIGN_IDENTITY" \
+        "$SETUP_APP"
+
+    codesign --verify --deep --strict "$SETUP_APP"
+    echo "✅ Setup app signed"
+else
+    echo "⚠️  Entitlements not found, skipping code signing"
+fi
+
 # Update payload
 echo "Updating payload..."
-mkdir -p "$SCRIPT_DIR/payload/usr/local/lib/mcp-eventkit"
-cp "$PROJECT_DIR/build/mcp-eventkit" "$SCRIPT_DIR/payload/usr/local/lib/mcp-eventkit/"
-cp "$PROJECT_DIR/build/libEventKitBridge.dylib" "$SCRIPT_DIR/payload/usr/local/lib/mcp-eventkit/"
+rm -rf "$SCRIPT_DIR/payload"
+mkdir -p "$SCRIPT_DIR/payload/Applications"
+mkdir -p "$SCRIPT_DIR/payload/usr/local/bin"
+
+# Copy app bundles to payload
+cp -R "$APP_DIR" "$SCRIPT_DIR/payload/Applications/"
+cp -R "$SCRIPT_DIR/PermissionHelper/$SETUP_APP_NAME" "$SCRIPT_DIR/payload/Applications/"
+cp -R "$SCRIPT_DIR/Uninstall MCP EventKit.app" "$SCRIPT_DIR/payload/Applications/"
 
 # Create component package
 echo "Creating component package..."
@@ -67,21 +131,36 @@ EOF
 
 # Create product archive
 echo "Creating installer package..."
+mkdir -p "$PROJECT_DIR/dist"
 productbuild \
     --distribution "$SCRIPT_DIR/distribution.xml" \
     --resources "$SCRIPT_DIR/resources" \
     --package-path "$SCRIPT_DIR" \
     "$PROJECT_DIR/dist/$PKG_NAME"
 
+# Sign the pkg
+echo "Signing installer package..."
+productsign --sign "$PKG_SIGN_IDENTITY" \
+    "$PROJECT_DIR/dist/$PKG_NAME" \
+    "$PROJECT_DIR/dist/${PKG_NAME%.pkg}-signed.pkg"
+
+# Replace unsigned with signed
+mv "$PROJECT_DIR/dist/${PKG_NAME%.pkg}-signed.pkg" "$PROJECT_DIR/dist/$PKG_NAME"
+echo "✅ Installer package signed"
+
 # Cleanup
 rm -f "$SCRIPT_DIR/component.pkg"
 rm -f "$SCRIPT_DIR/distribution.xml"
+rm -rf "$SCRIPT_DIR/payload"
 
 echo ""
 echo "============================================"
-echo "  Installer created successfully!"
+echo "  Installer created and signed!"
 echo "  $PROJECT_DIR/dist/$PKG_NAME"
 echo "============================================"
 echo ""
-echo "To install: double-click the .pkg file"
-echo "To sign (optional): productsign --sign 'Developer ID Installer' dist/$PKG_NAME dist/$PKG_NAME.signed"
+echo "To notarize:"
+echo "  xcrun notarytool submit dist/$PKG_NAME --apple-id YOUR_APPLE_ID --team-id YOUR_TEAM_ID --password YOUR_APP_SPECIFIC_PASSWORD --wait"
+echo ""
+echo "To staple after notarization:"
+echo "  xcrun stapler staple dist/$PKG_NAME"
