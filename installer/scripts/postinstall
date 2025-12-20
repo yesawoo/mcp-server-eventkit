@@ -3,18 +3,23 @@
 
 set -e
 
-INSTALL_DIR="/usr/local/lib/mcp-eventkit"
+APP_PATH="/Applications/MCP EventKit.app"
+BIN_PATH="$APP_PATH/Contents/MacOS/mcp-eventkit"
 BIN_LINK="/usr/local/bin/mcp-eventkit"
+SETUP_APP="/Applications/MCP EventKit Setup.app"
 CLAUDE_CONFIG_DIR="$HOME/Library/Application Support/Claude"
 CLAUDE_CONFIG="$CLAUDE_CONFIG_DIR/claude_desktop_config.json"
 
 echo "Configuring MCP EventKit Server..."
 
-# Create symlink to binary
+# Create /usr/local/bin if it doesn't exist
+mkdir -p /usr/local/bin
+
+# Create symlink to binary in app bundle
 if [ -L "$BIN_LINK" ]; then
     rm "$BIN_LINK"
 fi
-ln -sf "$INSTALL_DIR/mcp-eventkit" "$BIN_LINK"
+ln -sf "$BIN_PATH" "$BIN_LINK"
 
 # Ensure Claude config directory exists
 mkdir -p "$CLAUDE_CONFIG_DIR"
@@ -62,24 +67,21 @@ JSON
     echo "Created Claude Desktop configuration"
 fi
 
-# Set permissions
-chmod 755 "$INSTALL_DIR/mcp-eventkit"
-chmod 755 "$INSTALL_DIR/libEventKitBridge.dylib"
+# Open the Setup app to request permissions
+if [ -d "$SETUP_APP" ]; then
+    echo "Opening MCP EventKit Setup to configure permissions..."
+    # Use sudo -u to run as the actual user, not root
+    ACTUAL_USER=$(stat -f "%Su" /dev/console)
+    sudo -u "$ACTUAL_USER" open "$SETUP_APP"
+fi
 
 echo ""
 echo "============================================"
 echo "  MCP EventKit Server installed!"
 echo "============================================"
 echo ""
-echo "Next steps:"
-echo "1. Quit and reopen Claude Desktop"
-echo "2. Grant permissions when prompted:"
-echo "   - Reminders access"
-echo "   - Full Disk Access (for tags feature)"
-echo ""
-echo "To grant Full Disk Access:"
-echo "  System Settings > Privacy & Security > Full Disk Access"
-echo "  Add: /usr/local/bin/mcp-eventkit"
+echo "Please grant Calendar and Reminders permissions"
+echo "in the Setup window that just opened."
 echo ""
 
 exit 0

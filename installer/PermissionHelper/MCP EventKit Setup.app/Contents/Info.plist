@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>MCP EventKit Setup</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.mcp.eventkit-setup</string>
+    <key>CFBundleName</key>
+    <string>MCP EventKit Setup</string>
+    <key>CFBundleDisplayName</key>
+    <string>MCP EventKit Setup</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>12.0</string>
+    <key>LSUIElement</key>
+    <false/>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>NSCalendarsUsageDescription</key>
+    <string>MCP EventKit necesita acceso a tus calendarios para crear, leer, actualizar y eliminar eventos a través de Claude y otros asistentes de IA.</string>
+    <key>NSRemindersUsageDescription</key>
+    <string>MCP EventKit necesita acceso a tus recordatorios para crear, leer, actualizar y completar tareas a través de Claude y otros asistentes de IA.</string>
+    <key>NSCalendarsFullAccessUsageDescription</key>
+    <string>MCP EventKit necesita acceso completo a tus calendarios para gestionar eventos a través de Claude y otros asistentes de IA.</string>
+    <key>NSRemindersFullAccessUsageDescription</key>
+    <string>MCP EventKit necesita acceso completo a tus recordatorios para gestionar tareas a través de Claude y otros asistentes de IA.</string>
+</dict>
+</plist>

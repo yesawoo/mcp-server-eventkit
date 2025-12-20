@@ -68,6 +68,13 @@ export interface EventCalendar {
   source: string;
 }
 
+export interface PermissionStatus {
+  calendars: string;
+  reminders: string;
+  calendarsGranted: boolean;
+  remindersGranted: boolean;
+}
+
 // =============================================================================
 // Parameter types for bridge methods
 // =============================================================================
@@ -152,13 +159,17 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  */
 function findLibrary(): string {
   const possiblePaths = [
-    // Installed location (from .pkg)
+    // App bundle Frameworks directory (installed via .pkg)
+    "/Applications/MCP EventKit.app/Contents/Frameworks/libEventKitBridge.dylib",
+    // Relative to executable in app bundle (Contents/MacOS/../Frameworks)
+    join(process.execPath, "../Frameworks/libEventKitBridge.dylib"),
+    // Legacy installed location
     "/usr/local/lib/mcp-eventkit/libEventKitBridge.dylib",
     // Development location
     join(__dirname, "../../build/libEventKitBridge.dylib"),
     // Same directory as binary (for compiled standalone)
     join(__dirname, "libEventKitBridge.dylib"),
-    // Relative to executable
+    // Relative to executable (legacy)
     join(process.execPath, "../libEventKitBridge.dylib"),
   ];
 
@@ -248,6 +259,11 @@ const ffiSymbols = {
   },
   ekb_delete_calendar_event: {
     args: [FFIType.ptr],
+    returns: FFIType.ptr,
+  },
+  // Permission check
+  ekb_check_permissions: {
+    args: [],
     returns: FFIType.ptr,
   },
   // Memory management
@@ -531,6 +547,20 @@ export class EventKitBridge {
     const resultPtr = lib.symbols.ekb_delete_calendar_event(ptr(cstring));
     const jsonString = readAndFreeString(resultPtr);
     return parseResponse<boolean>(jsonString);
+  }
+
+  // ===========================================================================
+  // Permission Methods
+  // ===========================================================================
+
+  /**
+   * Check current permission status without requesting
+   * @returns Permission status for calendars and reminders
+   */
+  checkPermissions(): PermissionStatus {
+    const resultPtr = lib.symbols.ekb_check_permissions();
+    const jsonString = readAndFreeString(resultPtr);
+    return parseResponse<PermissionStatus>(jsonString);
   }
 }
 
