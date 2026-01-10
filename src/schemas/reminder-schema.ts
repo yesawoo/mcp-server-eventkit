@@ -43,6 +43,15 @@ export const CompleteReminderSchema = z.object({
 export type CompleteReminderInput = z.infer<typeof CompleteReminderSchema>;
 
 /**
+ * Schema for deleting a reminder
+ */
+export const DeleteReminderSchema = z.object({
+  reminder_id: z.string().min(1).describe("The ID of the reminder to delete"),
+});
+
+export type DeleteReminderInput = z.infer<typeof DeleteReminderSchema>;
+
+/**
  * Schema for updating an existing reminder
  */
 export const UpdateReminderSchema = z.object({
