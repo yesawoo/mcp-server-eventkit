@@ -108,6 +108,7 @@ claude mcp add --transport stdio --scope user eventkit -- /usr/local/bin/mcp-eve
 | `list_reminders` | List incomplete or completed reminders |
 | `create_reminder` | Create a new reminder |
 | `complete_reminder` | Mark a reminder as completed |
+| `delete_reminder` | Delete a reminder permanently |
 | `update_reminder` | Update reminder title, notes, due date, priority |
 | `search_reminders` | Search reminders with text query and filters |
 | `list_reminders_filtered` | List reminders with advanced filters |
