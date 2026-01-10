@@ -306,6 +306,41 @@ public func ekb_complete_reminder(_ idPtr: UnsafePointer<CChar>?) -> UnsafeMutab
     return successResponse(reminderToData(reminder))
 }
 
+/// Delete a reminder permanently
+/// Parameters:
+///   - idPtr: reminder ID string
+/// Returns: JSON with success status
+@_cdecl("ekb_delete_reminder")
+public func ekb_delete_reminder(_ idPtr: UnsafePointer<CChar>?) -> UnsafeMutablePointer<CChar>? {
+    guard let idPtr = idPtr else {
+        return errorResponse("Invalid input: null pointer")
+    }
+
+    // Ensure we have access
+    if !hasAccess {
+        let _ = ekb_request_access()
+        if !hasAccess {
+            return errorResponse("No access to Reminders. Call ekb_request_access first.")
+        }
+    }
+
+    let reminderId = String(cString: idPtr)
+
+    // Fetch the reminder
+    guard let reminder = eventStore.calendarItem(withIdentifier: reminderId) as? EKReminder else {
+        return errorResponse("Reminder not found with ID: \(reminderId)")
+    }
+
+    // Delete
+    do {
+        try eventStore.remove(reminder, commit: true)
+    } catch {
+        return errorResponse("Failed to delete reminder: \(error.localizedDescription)")
+    }
+
+    return successResponse(true)
+}
+
 /// Update an existing reminder
 /// Parameters:
 ///   - idPtr: reminder ID string

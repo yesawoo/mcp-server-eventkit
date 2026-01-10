@@ -224,6 +224,10 @@ const ffiSymbols = {
     args: [FFIType.ptr],
     returns: FFIType.ptr,
   },
+  ekb_delete_reminder: {
+    args: [FFIType.ptr],
+    returns: FFIType.ptr,
+  },
   ekb_list_calendars: {
     args: [],
     returns: FFIType.ptr,
@@ -381,6 +385,18 @@ export class EventKitBridge {
     const resultPtr = lib.symbols.ekb_complete_reminder(ptr(cstring));
     const jsonString = readAndFreeString(resultPtr);
     return parseResponse<Reminder>(jsonString);
+  }
+
+  /**
+   * Delete a reminder permanently
+   * @param reminderId - The ID of the reminder to delete
+   * @returns true if deleted successfully
+   */
+  deleteReminder(reminderId: string): boolean {
+    const cstring = toCString(reminderId);
+    const resultPtr = lib.symbols.ekb_delete_reminder(ptr(cstring));
+    const jsonString = readAndFreeString(resultPtr);
+    return parseResponse<boolean>(jsonString);
   }
 
   /**
