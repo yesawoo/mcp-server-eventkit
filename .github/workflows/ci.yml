@@ -59,6 +59,11 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       - name: Install dependencies
         run: bun install
 
@@ -68,8 +73,20 @@ jobs:
       - name: Build binary
         run: bun run build:binary
 
+      - name: Validate mcpb manifest
+        run: npx @anthropic-ai/mcpb@latest validate manifest.json
+
+      - name: Pack mcpb extension
+        run: npx @anthropic-ai/mcpb@latest pack . build/mcp-eventkit.mcpb
+
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
         with:
           name: mcp-eventkit-binary
           path: build/mcp-eventkit
+
+      - name: Upload mcpb extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-eventkit.mcpb
+          path: build/mcp-eventkit.mcpb

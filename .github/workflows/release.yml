@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Release
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build Swift bridge
+        run: bun run build:swift
+
+      - name: Build binary
+        run: bun run build:binary
+
+      - name: Validate mcpb manifest
+        run: npx @anthropic-ai/mcpb@latest validate manifest.json
+
+      - name: Pack mcpb extension
+        run: npx @anthropic-ai/mcpb@latest pack . build/mcp-eventkit.mcpb
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/mcp-eventkit.mcpb
+          generate_release_notes: true
+          body: |
+            ## Install
+
+            1. Download `mcp-eventkit.mcpb` below
+            2. Open Claude Desktop → **Settings → Extensions**
+            3. Drag-and-drop the `.mcpb` file or click **Install Extension**
+            4. macOS will prompt for Calendar/Reminders permissions on first use
+
+            ## Tools included
+
+            **Reminders:** list, create, update, delete, search, complete, toggle flag, list tags
+            **Calendar:** list calendars, list events, create, update, delete events
