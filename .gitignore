@@ -10,7 +10,7 @@ dist/
 server/
 
 # Bun build cache
-.18a03dbf7fdfafa6*
+*.bun-build
 
 # -----------------------------------------------------------------------------
 # Dependencies
