@@ -1,0 +1,24 @@
+# Build artifacts (the binary is in server/)
+build/
+.18a03dbf7fdfafa6*
+
+# Dependencies (not needed - binary is self-contained)
+node_modules/
+bun.lock
+
+# Source code (not needed - binary is compiled)
+src/
+
+# Development files
+.git/
+.github/
+docs/
+installer/
+*.md
+!manifest.json
+.prettierrc
+.prettierignore
+eslint.config.js
+tsconfig.json
+package.json
+.gitignore

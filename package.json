@@ -46,12 +46,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/asanchezr/mcp-server-eventkit.git"
+    "url": "git+https://github.com/yesawoo/mcp-server-eventkit.git"
   },
   "bugs": {
-    "url": "https://github.com/asanchezr/mcp-server-eventkit/issues"
+    "url": "https://github.com/yesawoo/mcp-server-eventkit/issues"
   },
-  "homepage": "https://github.com/asanchezr/mcp-server-eventkit#readme",
+  "homepage": "https://github.com/yesawoo/mcp-server-eventkit#readme",
   "engines": {
     "bun": ">=1.0.0"
   }

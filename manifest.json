@@ -1,0 +1,25 @@
+{
+  "manifest_version": "0.3",
+  "name": "mcp-eventkit",
+  "version": "0.1.3",
+  "description": "Manage macOS Calendars and Reminders from Claude. Create, update, search, and delete reminders and calendar events that sync across all your Apple devices via iCloud.",
+  "author": {
+    "name": "yesawoo",
+    "url": "https://github.com/yesawoo"
+  },
+  "tools_generated": true,
+  "server": {
+    "type": "binary",
+    "entry_point": "server/mcp-eventkit",
+    "mcp_config": {
+      "command": "${__dirname}/server/mcp-eventkit",
+      "args": [],
+      "env": {
+        "DYLD_LIBRARY_PATH": "${__dirname}/server"
+      }
+    }
+  },
+  "compatibility": {
+    "platforms": ["darwin"]
+  }
+}
