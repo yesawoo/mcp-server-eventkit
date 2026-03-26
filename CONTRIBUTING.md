@@ -1,6 +1,6 @@
-# Contributing to MCP Server EventKit
+# Contributing to Calendar & Reminders for Mac
 
-Thank you for your interest in contributing to MCP Server EventKit! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to Calendar & Reminders for Mac! This document provides guidelines and instructions for contributing.
 
 ## Table of Contents
 
