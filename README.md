@@ -1,5 +1,9 @@
 # MCP Server EventKit
 
+[![CI](https://github.com/yesawoo/mcp-server-eventkit/actions/workflows/ci.yml/badge.svg)](https://github.com/yesawoo/mcp-server-eventkit/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![macOS](https://img.shields.io/badge/platform-macOS-lightgrey.svg)]()
+
 A Model Context Protocol (MCP) server that provides native integration with Apple's EventKit framework, allowing Claude to manage **Reminders** and **Calendar events** directly in macOS.
 
 ## Features
@@ -23,25 +27,15 @@ A Model Context Protocol (MCP) server that provides native integration with Appl
 
 ## Installation
 
-### Option 1: Installer Package (Recommended)
+### Option 1: Claude Desktop Extension (Recommended)
 
-Download and run the `.pkg` installer:
-
-```bash
-# Build the installer (see Building the Installer below)
-open dist/MCP-EventKit-Server-1.1.0.pkg
-```
-
-The installer will:
-- Install the server binary to `/usr/local/lib/mcp-eventkit/`
-- Configure Claude Desktop automatically
-- Install an uninstaller app in `/Applications/`
+Install the `.mcpb` extension directly in Claude Desktop. Pre-built releases are available on the [GitHub Releases](https://github.com/yesawoo/mcp-server-eventkit/releases) page.
 
 ### Option 2: Manual Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/mcp-server-eventkit.git
+git clone https://github.com/yesawoo/mcp-server-eventkit.git
 cd mcp-server-eventkit
 ```
 
@@ -126,7 +120,18 @@ claude mcp add --transport stdio --scope user eventkit -- /usr/local/bin/mcp-eve
 | `update_calendar_event` | Update an existing event |
 | `delete_calendar_event` | Delete a calendar event |
 
-## Building the Installer
+## Building from Source
+
+### Claude Desktop Extension (.mcpb)
+
+```bash
+bun install
+just pack
+```
+
+This builds the Swift bridge, compiles the standalone binary, validates the manifest, and packs the `.mcpb` extension.
+
+### Installer Package (.pkg)
 
 To create a distributable `.pkg` installer:
 
@@ -142,16 +147,14 @@ To create a distributable `.pkg` installer:
 bun install
 
 # 2. Build the Swift bridge (creates libEventKitBridge.dylib)
-./src/swift-bridge/build.sh
+bun run build:swift
 
 # 3. Compile standalone binary (bundles TypeScript into single executable)
-bun build --compile --outfile build/mcp-eventkit src/index.ts
+bun run build:binary
 
 # 4. Build the .pkg installer
-./installer/build-pkg.sh 1.1.0
+bun run build:pkg
 ```
-
-The installer will be created at `dist/MCP-EventKit-Server-1.1.0.pkg`
 
 ### Installer Contents
 
@@ -170,8 +173,8 @@ To sign the package for distribution:
 
 ```bash
 productsign --sign "Developer ID Installer: Your Name" \
-  dist/MCP-EventKit-Server-1.1.0.pkg \
-  dist/MCP-EventKit-Server-1.1.0-signed.pkg
+  dist/MCP-EventKit-Server-<version>.pkg \
+  dist/MCP-EventKit-Server-<version>-signed.pkg
 ```
 
 ## Development
