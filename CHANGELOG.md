@@ -7,12 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2025-03-17
+
 ### Added
 
 - `delete_reminder` tool to permanently delete reminders from Apple Reminders
-  - Swift bridge function `ekb_delete_reminder` in EventKitBridge.swift
-  - TypeScript wrapper `deleteReminder` in eventkit-bridge.ts
-  - MCP tool registration in delete-reminder.ts
+- Claude Desktop Extension packaging (`.mcpb` bundle format)
+- GitHub Actions release workflow for automated `.mcpb` builds
+- Justfile for version bumping and local dev tasks
+
+### Changed
+
+- Forked to yesawoo org and updated all repository URLs
 
 ## [0.1.2] - 2024-12-19
 
