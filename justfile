@@ -48,6 +48,19 @@ check:
     bun run format:check
     bun run typecheck
 
+# Auto-fix lint and formatting
+fix:
+    bun run lint:fix
+    bun run format
+
+# Run dev server with hot reload
+dev:
+    bun run dev
+
+# Install dependencies
+install:
+    bun install
+
 # Pack the mcpb extension locally
 pack: build
     npx @anthropic-ai/mcpb@latest validate manifest.json
