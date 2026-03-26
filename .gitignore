@@ -18,16 +18,18 @@ server/
 node_modules/
 
 # -----------------------------------------------------------------------------
-# Bun
+# Bun (legacy binary lockfile format)
 # -----------------------------------------------------------------------------
 bun.lockb
 
 # -----------------------------------------------------------------------------
-# Installer artifacts (generated during pkg build)
+# Installer artifacts and binaries
 # -----------------------------------------------------------------------------
 installer/payload/
 installer/component.pkg
 installer/distribution.xml
+installer/**/*.app/Contents/MacOS/
+installer/**/*.app/Contents/Frameworks/
 
 # -----------------------------------------------------------------------------
 # macOS
