@@ -209,6 +209,8 @@ public func ekb_create_reminder(_ jsonPtr: UnsafePointer<CChar>?) -> UnsafeMutab
         let title: String
         let notes: String?
         let due_date: String?
+        let list_id: String?
+        let url: String?
     }
 
     guard let jsonData = jsonString.data(using: .utf8) else {
@@ -223,17 +225,33 @@ public func ekb_create_reminder(_ jsonPtr: UnsafePointer<CChar>?) -> UnsafeMutab
         return errorResponse("Failed to parse JSON: \(error.localizedDescription)")
     }
 
-    // Get default calendar
-    guard let calendar = eventStore.defaultCalendarForNewReminders() else {
-        return errorResponse(
-            "No default calendar for reminders. Please create a Reminders list first.")
+    // Get calendar (specific list or default)
+    let calendar: EKCalendar
+    if let listId = params.list_id {
+        guard let found = eventStore.calendars(for: .reminder).first(where: {
+            $0.calendarIdentifier == listId
+        }) else {
+            return errorResponse("Reminder list not found for id: \(listId)")
+        }
+        calendar = found
+    } else {
+        guard let defaultCal = eventStore.defaultCalendarForNewReminders() else {
+            return errorResponse(
+                "No default calendar for reminders. Please create a Reminders list first.")
+        }
+        calendar = defaultCal
     }
 
     // Create reminder
     let reminder = EKReminder(eventStore: eventStore)
     reminder.calendar = calendar
     reminder.title = params.title
+
     reminder.notes = params.notes
+
+    if let urlString = params.url, let url = URL(string: urlString) {
+        reminder.url = url
+    }
 
     // Parse due date if provided
     if let dueDateString = params.due_date {

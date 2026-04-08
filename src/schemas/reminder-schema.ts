@@ -12,6 +12,17 @@ export const CreateReminderSchema = z.object({
     .describe(
       "Optional due date in ISO 8601 format (e.g., 2025-12-20T10:00:00Z)"
     ),
+  list_id: z
+    .string()
+    .optional()
+    .describe(
+      "Optional ID of the Reminders list to create in. Use list_reminder_lists to find IDs. Defaults to the user's default list."
+    ),
+  url: z
+    .string()
+    .url()
+    .optional()
+    .describe("Optional URL to associate with the reminder"),
 });
 
 export type CreateReminderInput = z.infer<typeof CreateReminderSchema>;

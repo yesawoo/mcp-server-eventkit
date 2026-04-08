@@ -5,7 +5,7 @@ import { CreateReminderSchema } from "../schemas/reminder-schema.js";
 export function registerCreateReminderTool(server: McpServer) {
   server.tool(
     "create_reminder",
-    "Create a new reminder in the macOS Reminders app. The reminder will appear in the default Reminders list and sync via iCloud.",
+    "Create a new reminder in the macOS Reminders app. Optionally specify a list_id to create in a specific list (use list_reminder_lists to find IDs), otherwise uses the default list. Syncs via iCloud.",
     CreateReminderSchema.shape,
     async (args) => {
       try {

@@ -133,6 +133,8 @@ export interface CreateReminderParams {
   title: string;
   notes?: string;
   due_date?: string;
+  list_id?: string;
+  url?: string;
 }
 
 export interface UpdateReminderParams {
