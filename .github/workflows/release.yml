@@ -42,17 +42,19 @@ jobs:
         run: npx @anthropic-ai/mcpb@latest validate manifest.json
 
       - name: Pack mcpb extension
-        run: npx @anthropic-ai/mcpb@latest pack . build/mcp-eventkit.mcpb
+        run: |
+          VERSION=$(jq -r .version package.json)
+          npx @anthropic-ai/mcpb@latest pack . "build/mcp-eventkit-${VERSION}.mcpb"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: build/mcp-eventkit.mcpb
+          files: build/mcp-eventkit-*.mcpb
           generate_release_notes: true
           body: |
             ## Install
 
-            1. Download `mcp-eventkit.mcpb` below
+            1. Download the `.mcpb` file below
             2. Open Claude Desktop → **Settings → Extensions**
             3. Drag-and-drop the `.mcpb` file or click **Install Extension**
             4. macOS will prompt for Calendar/Reminders permissions on first use
