@@ -1,6 +1,6 @@
 {
   "name": "mcp-server-eventkit",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "description": "Calendar & Reminders for Mac — a Claude Desktop extension for managing macOS calendars and reminders via EventKit",
   "main": "src/index.ts",
