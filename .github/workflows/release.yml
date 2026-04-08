@@ -33,6 +33,11 @@ jobs:
       - name: Build binary
         run: bun run build:binary
 
+      - name: Stage server directory
+        run: |
+          mkdir -p server
+          cp build/mcp-eventkit build/libEventKitBridge.dylib server/
+
       - name: Validate mcpb manifest
         run: npx @anthropic-ai/mcpb@latest validate manifest.json
 

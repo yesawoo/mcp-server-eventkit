@@ -63,5 +63,8 @@ install:
 
 # Pack the mcpb extension locally
 pack: build
+    mkdir -p server
+    cp build/mcp-eventkit build/libEventKitBridge.dylib server/
     npx @anthropic-ai/mcpb@latest validate manifest.json
     npx @anthropic-ai/mcpb@latest pack . build/mcp-eventkit.mcpb
+    rm -rf server
