@@ -8,7 +8,7 @@ import { registerPrompts } from "./prompts/index.js";
 export function createServer(): McpServer {
   const server = new McpServer({
     name: "eventkit-reminders",
-    version: "0.1.7",
+    version: "0.1.8",
   });
 
   // Register all tools
