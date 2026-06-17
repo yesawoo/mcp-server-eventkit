@@ -7,6 +7,31 @@ import SQLite3
 /// Single EKEventStore instance (expensive to create)
 private let eventStore = EKEventStore()
 
+// MARK: - Date Decoding
+
+/// Flexible ISO 8601 decoder that handles dates with and without timezone offsets.
+/// Swift's built-in .iso8601 strategy requires a timezone suffix (Z or ±HH:MM).
+/// This handles bare local datetimes like "2024-01-15T09:00:00" by treating them as local time.
+private func makeFlexibleDateDecoder() -> JSONDecoder {
+    let decoder = JSONDecoder()
+    let withTZ = ISO8601DateFormatter()
+    withTZ.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    let withTZNoFrac = ISO8601DateFormatter()
+    withTZNoFrac.formatOptions = [.withInternetDateTime]
+    let noTZ = ISO8601DateFormatter()
+    noTZ.formatOptions = [.withFullDate, .withTime, .withDashSeparatorInDate, .withColonSeparatorInTime]
+    decoder.dateDecodingStrategy = .custom { dec in
+        let str = try dec.singleValueContainer().decode(String.self)
+        if let d = withTZ.date(from: str) { return d }
+        if let d = withTZNoFrac.date(from: str) { return d }
+        if let d = noTZ.date(from: str) { return d }
+        throw DecodingError.dataCorrupted(
+            DecodingError.Context(codingPath: dec.codingPath,
+                                  debugDescription: "Cannot parse date: \(str)"))
+    }
+    return decoder
+}
+
 /// Track if we have calendar access
 private var hasAccess = false
 
@@ -1153,8 +1178,7 @@ public func ekb_list_calendar_events(_ inputPtr: UnsafePointer<CChar>?) -> Unsaf
     }
 
     let inputString = String(cString: inputPtr)
-    let decoder = JSONDecoder()
-    decoder.dateDecodingStrategy = .iso8601
+    let decoder = makeFlexibleDateDecoder()
 
     guard let inputData = inputString.data(using: .utf8),
         let input = try? decoder.decode(ListEventsInput.self, from: inputData)
@@ -1205,8 +1229,7 @@ public func ekb_create_calendar_event(_ inputPtr: UnsafePointer<CChar>?) -> Unsa
     }
 
     let inputString = String(cString: inputPtr)
-    let decoder = JSONDecoder()
-    decoder.dateDecodingStrategy = .iso8601
+    let decoder = makeFlexibleDateDecoder()
 
     guard let inputData = inputString.data(using: .utf8),
         let input = try? decoder.decode(CreateEventInput.self, from: inputData)
@@ -1268,8 +1291,7 @@ public func ekb_update_calendar_event(_ inputPtr: UnsafePointer<CChar>?) -> Unsa
     }
 
     let inputString = String(cString: inputPtr)
-    let decoder = JSONDecoder()
-    decoder.dateDecodingStrategy = .iso8601
+    let decoder = makeFlexibleDateDecoder()
 
     guard let inputData = inputString.data(using: .utf8),
         let input = try? decoder.decode(UpdateEventInput.self, from: inputData)

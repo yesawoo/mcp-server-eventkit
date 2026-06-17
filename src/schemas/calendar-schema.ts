@@ -7,12 +7,12 @@ export const ListCalendarEventsSchema = z.object({
   start_date: z
     .string()
     .describe(
-      "Start date/time in ISO 8601 format (e.g., 2024-01-15T09:00:00Z). Required."
+      "Start date/time in ISO 8601 format. Accepts timezone-aware (e.g., 2024-01-15T09:00:00Z) or local time (e.g., 2024-01-15T09:00:00). Required."
     ),
   end_date: z
     .string()
     .describe(
-      "End date/time in ISO 8601 format (e.g., 2024-01-15T17:00:00Z). Required."
+      "End date/time in ISO 8601 format. Accepts timezone-aware (e.g., 2024-01-15T17:00:00Z) or local time (e.g., 2024-01-15T17:00:00). Required."
     ),
   calendar_ids: z
     .array(z.string())
@@ -30,12 +30,12 @@ export const CreateCalendarEventSchema = z.object({
   start_date: z
     .string()
     .describe(
-      "Start date/time in ISO 8601 format (e.g., 2024-01-15T09:00:00Z). Required."
+      "Start date/time in ISO 8601 format. Accepts timezone-aware (e.g., 2024-01-15T09:00:00Z) or local time (e.g., 2024-01-15T09:00:00). Required."
     ),
   end_date: z
     .string()
     .describe(
-      "End date/time in ISO 8601 format (e.g., 2024-01-15T10:00:00Z). Required."
+      "End date/time in ISO 8601 format. Accepts timezone-aware (e.g., 2024-01-15T10:00:00Z) or local time (e.g., 2024-01-15T10:00:00). Required."
     ),
   calendar_id: z
     .string()
